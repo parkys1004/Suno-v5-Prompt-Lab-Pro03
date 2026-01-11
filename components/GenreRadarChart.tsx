@@ -17,8 +17,7 @@ interface GenreRadarChartProps {
 const GenreRadarChart: React.FC<GenreRadarChartProps> = ({ genre }) => {
   const isKpop = genre.category === 'K-POP';
   const mainColor = isKpop ? '#db2777' : '#3b82f6';
-  const fillColor = isKpop ? '#db2777' : '#3b82f6';
-
+  
   const data: RadarDataPoint[] = useMemo(() => {
     return RADAR_LABELS.map((label, index) => ({
       subject: label,
@@ -28,22 +27,29 @@ const GenreRadarChart: React.FC<GenreRadarChartProps> = ({ genre }) => {
   }, [genre]);
 
   return (
-    <div className="w-full h-[300px]">
+    <div className="w-full h-[350px] relative">
       <ResponsiveContainer width="100%" height="100%">
         <RadarChart cx="50%" cy="50%" outerRadius="70%" data={data}>
-          <PolarGrid />
+          <defs>
+            <linearGradient id="radarFill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor={mainColor} stopOpacity={0.8}/>
+              <stop offset="95%" stopColor={mainColor} stopOpacity={0.2}/>
+            </linearGradient>
+          </defs>
+          <PolarGrid gridType="circle" stroke="#e5e7eb" strokeDasharray="3 3" />
           <PolarAngleAxis 
             dataKey="subject" 
-            tick={{ fill: '#4b5563', fontSize: 12, fontWeight: 700 }} 
+            tick={{ fill: '#4b5563', fontSize: 13, fontWeight: 800 }} 
           />
           <PolarRadiusAxis angle={30} domain={[0, 10]} tick={false} axisLine={false} />
           <Radar
             name={genre.name}
             dataKey="A"
             stroke={mainColor}
-            strokeWidth={3}
-            fill={fillColor}
-            fillOpacity={0.15}
+            strokeWidth={4}
+            fill="url(#radarFill)"
+            fillOpacity={0.6}
+            isAnimationActive={true}
           />
         </RadarChart>
       </ResponsiveContainer>
